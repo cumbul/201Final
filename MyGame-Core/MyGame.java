@@ -34,6 +34,7 @@ public class MyGame implements ApplicationListener {
     //for directions and start to be shown in the beginning
     private boolean isWaiting = true;
     private float time_passed = 0.0f;
+    private boolean gamePaused = true;
     
     //so that we don't instantiate more than one player
     private boolean playerExists = false;
@@ -301,7 +302,12 @@ public class MyGame implements ApplicationListener {
         if(isWaiting)
         {
             batch.begin();
-            time_passed += Gdx.graphics.getDeltaTime();
+            if(Gdx.input.isKeyPressed(Input.Keys.S))
+            {
+                gamePaused = false;
+            }
+            if(!gamePaused)
+                time_passed += Gdx.graphics.getDeltaTime();
    
             if(time_passed > 3)
             {
@@ -506,6 +512,7 @@ public class MyGame implements ApplicationListener {
 
       public void SetToReadyState()
     {
+    	gamePaused = true;
         coins_collected = 0;
         score = 0;
         which_level = 0;
