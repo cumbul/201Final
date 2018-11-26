@@ -8,7 +8,7 @@ import java.util.*;
 import java.sql.*;
 public class User {
     //SQL PASS
-    protected static String SQLPass = "csci201l";
+    protected static String SQLPass = "root";
     // Variables for User class
     private String fname = "";
     private String lname = "";

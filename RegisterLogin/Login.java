@@ -100,6 +100,7 @@ public class Login extends javax.swing.JFrame {
         backBtn.setBounds(39, 32, 168, 63);
 
         jLabel2.setText("jLabel2");
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/registerlogin/gradient-white-yellow-linear-1920x1080-c2-ffffff-ffd700-a-90-f-14.png")));
         getContentPane().add(jLabel2);
         jLabel2.setBounds(0, 0, 1300, 1010);
 

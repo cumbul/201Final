@@ -122,7 +122,7 @@ public class Home extends javax.swing.JFrame {
         getContentPane().add(scoresBtn);
         scoresBtn.setBounds(1110, 870, 145, 57);
 
-        jLabel3.setIcon(new javax.swing.ImageIcon("C:\\Users\\Karalee\\Desktop\\CSCI 201\\201FinalProject\\RegisterLogin\\images\\gradient-white-yellow-linear-1920x1080-c2-ffffff-ffd700-a-90-f-14.png")); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/registerlogin/gradient-white-yellow-linear-1920x1080-c2-ffffff-ffd700-a-90-f-14.png")));
         jLabel3.setText("jLabel3");
         getContentPane().add(jLabel3);
         jLabel3.setBounds(0, 0, 1300, 1010);
@@ -138,7 +138,8 @@ public class Home extends javax.swing.JFrame {
 
     private void singlePlayerBtnActionPerformed(java.awt.event.ActionEvent evt) {
     	// go to single player game
-    	boolean x = DesktopLauncher.run();
+    	DesktopLauncher gameLauncher = new DesktopLauncher();//make new game launcher
+    	boolean x = gameLauncher.run();
     	if(x) {close();}
     }
 

@@ -7,6 +7,9 @@ package registerlogin;
 
 import java.util.ArrayList;
 
+import com.mygdx.game.MyGame;
+import com.mygdx.game.desktop.DesktopLauncher;
+
 /**
  *
  * @author Karalee
@@ -72,12 +75,12 @@ public class GuestScoresScreen extends javax.swing.JFrame {
         backBtn.setBounds(40, 870, 145, 57);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 50)); // NOI18N
-        jLabel1.setText("Scores");
+        jLabel1.setText("Top Scores");
         getContentPane().add(jLabel1);
-        jLabel1.setBounds(574, 27, 144, 45);
+        jLabel1.setBounds(538, 27, 290, 58);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel2.setText("Score: 100 pts");
+        jLabel2.setText("Your Score: 100 pts");
         //jLabel2.setText(StartUp.user.getUname()+"'s High Score: "+ Integer.toString(StartUp.user.getHighScore())+" pts");
         getContentPane().add(jLabel2);
         jLabel2.setBounds(310, 170, 680, 29);
@@ -98,7 +101,7 @@ public class GuestScoresScreen extends javax.swing.JFrame {
         getContentPane().add(jScrollPane1);
         jScrollPane1.setBounds(316, 241, 655, 508);
 
-        jLabel3.setIcon(new javax.swing.ImageIcon("C:\\Users\\Karalee\\Desktop\\CSCI 201\\201FinalProject\\RegisterLogin\\images\\gradient-white-yellow-linear-1920x1080-c2-ffffff-ffd700-a-90-f-14.png")); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/registerlogin/gradient-white-yellow-linear-1920x1080-c2-ffffff-ffd700-a-90-f-14.png")));
         jLabel3.setText("jLabel3");
         getContentPane().add(jLabel3);
         jLabel3.setBounds(0, 0, 1300, 1010);
@@ -108,8 +111,12 @@ public class GuestScoresScreen extends javax.swing.JFrame {
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
         // go back to home frame
-        Home homeScreen = new Home();
-        close();
+    	StartUp.isGuest = true;
+    	System.out.println("Playing as guest: "+StartUp.isGuest);
+    	MyGame game = new MyGame();
+    	//DesktopLauncher launcher = new DesktopLauncher();
+    	//boolean x = launcher.run();
+    	//if(x) {close();}
     }                                       
     private void addScoresToTable()
     {

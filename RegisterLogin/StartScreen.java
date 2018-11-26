@@ -108,7 +108,8 @@ public class StartScreen extends javax.swing.JFrame {
         // change screen to the game, no home screen will be accessable
     	StartUp.isGuest = true;
     	System.out.println("Playing as guest: "+StartUp.isGuest);
-    	boolean x = DesktopLauncher.run();
+    	DesktopLauncher gameLauncher = new DesktopLauncher();//make new game launcher
+    	boolean x = gameLauncher.run();
     	if(x) {close();}
     	
     }//GEN-LAST:event_playAsGuestBtnActionPerformed

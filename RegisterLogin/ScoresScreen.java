@@ -80,19 +80,19 @@ public class ScoresScreen extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel2.setText("<username>'s High Score: 100 pts");
-        //jLabel2.setText(StartUp.user.getUname()+"'s High Score: "+ Integer.toString(StartUp.user.getHighScore())+" pts");
+        jLabel2.setText(StartUp.user.getUname()+"'s High Score: "+ Integer.toString(StartUp.user.getHighScore())+" pts");
         getContentPane().add(jLabel2);
         jLabel2.setBounds(310, 170, 680, 29);
 
         usernameLabel.setFont(new java.awt.Font("Tahoma", 0, 21)); // NOI18N
         usernameLabel.setText("Username:");
-        //usernameLabel.setText("Username: "+StartUp.user.getUname());
+        usernameLabel.setText("Username: "+StartUp.user.getUname());
         getContentPane().add(usernameLabel);
         usernameLabel.setBounds(22, 47, 480, 26);
 
         coinsLabel.setFont(new java.awt.Font("Tahoma", 0, 21)); // NOI18N
         coinsLabel.setText("Coins:");
-        //coinsLabel.setText("Coins: "+StartUp.user.getCoin());
+        coinsLabel.setText("Coins: "+StartUp.user.getCoin());
         getContentPane().add(coinsLabel);
         coinsLabel.setBounds(22, 88, 410, 26);
 
