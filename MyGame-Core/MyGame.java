@@ -37,6 +37,8 @@ public class MyGame implements ApplicationListener {
     
     //so that we don't instantiate more than one player
     private boolean playerExists = false;
+    private float playerStartx;
+    private float playerStarty;
     
     //so that player can't keep jumping forever, and we only jump when we didn't jump previously
     private boolean spacePressed = false;
@@ -330,6 +332,7 @@ public class MyGame implements ApplicationListener {
             batch.draw(playertexture, player.x, player.y);
             batch.end();
             if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            	SetToReadyState();
             	if(StartUp.isGuest == false)
             	{
             		System.out.println("displaying logged in user scores");
@@ -363,6 +366,7 @@ public class MyGame implements ApplicationListener {
 
                 cd.BlockCollision(player, blocks);
                 if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+                	SetToReadyState();
                 	if(StartUp.isGuest == false)
                 	{
                 		System.out.println("displaying logged in user scores");
@@ -441,6 +445,7 @@ public class MyGame implements ApplicationListener {
                 player.y += (mYSpeed*Gdx.graphics.getDeltaTime());
 
                 if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+                	SetToReadyState();
                 	if(StartUp.isGuest == false)
                 	{
                 		System.out.println("displaying logged in user scores");
@@ -497,6 +502,44 @@ public class MyGame implements ApplicationListener {
                 }  
             }
         } 
+    }
+
+      public void SetToReadyState()
+    {
+        coins_collected = 0;
+        score = 0;
+        which_level = 0;
+        isWaiting = true;
+        time_passed = 0.0f;
+        
+        x_start_level = 0.0f;
+        curr_width = 0;
+        which_level = 0;
+        
+        bg_start = 0.0f;
+        shift_1 = 0.0f;
+        shift_2 = 0.0f;
+        shift_3 = 0.0f;
+        one_that_stays = 3;
+        shift_time = 0.0f;
+        
+        mYSpeed = 0.0f;
+        
+        playerAnimTimer = 0.0f;
+        coinAnimTimer = 0.0f;
+        
+        first_iteration = true;
+        gameRunning = true;
+        
+        player.x = playerStartx;
+        player.y = playerStarty;
+        camera.position.x = playerStartx + (1024/2) - 190;
+        camera.update();
+        batch.begin();
+        batch.setProjectionMatrix(camera.combined);
+        batch.end();
+        LoadNextLevel();
+       
     }
 
     @Override
