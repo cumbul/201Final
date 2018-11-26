@@ -5,6 +5,8 @@
  */
 package registerlogin;
 
+import java.io.IOException;
+
 import com.mygdx.game.desktop.DesktopLauncher;
 
 /**
@@ -22,6 +24,7 @@ public class Home extends javax.swing.JFrame {
         setLocation(300,20);
         setVisible(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        sendUsernameMessage();
     }
     public void close(){
         this.setVisible(false);
@@ -35,6 +38,19 @@ public class Home extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    public void sendUsernameMessage()
+    {
+    	Message m = new Message(4,StartUp.user.getUname());
+    	try
+		{
+        	StartUp.startUp.oos.writeObject(m);
+        	StartUp.startUp.oos.flush(); 
+		}
+		catch(IOException ioe)
+		{
+			System.out.println("ioe: "+ioe.getMessage());
+		}
+    }
     private void initComponents() {
 
         multiplayerBtn = new javax.swing.JButton();
@@ -52,7 +68,7 @@ public class Home extends javax.swing.JFrame {
         multiplayerBtn.setBackground(new java.awt.Color(179, 11, 11));
         multiplayerBtn.setFont(new java.awt.Font("Tahoma", 0, 22)); // NOI18N
         multiplayerBtn.setForeground(new java.awt.Color(250, 250, 250));
-        multiplayerBtn.setText("Multiplayer");
+        multiplayerBtn.setText("Send Coin Request");
         multiplayerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 multiplayerBtnActionPerformed(evt);
