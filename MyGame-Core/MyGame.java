@@ -115,6 +115,8 @@ public class MyGame implements ApplicationListener {
     private boolean first_iteration = true;
     boolean gameRunning = true;
     
+    String characterSpritePath = "";
+    
    
     //create essentially generates the output
     @Override
@@ -136,10 +138,28 @@ public class MyGame implements ApplicationListener {
         camera.setToOrtho(false, 1024, 768);
         
         //set each of the player textures for our player run animation
+       
+        if(StartUp.user.getCharSelectedID() == 2)//miller
+        { 
+        	characterSpritePath = "trojanSprites/trojanRun";
+        }
+        else if(StartUp.user.getCharSelectedID() == 3)//miller
+        { 
+        	characterSpritePath = "sonicSprites/sonicRun";
+        }
+        else if(StartUp.user.getCharSelectedID() == 4)//miller
+        { 
+        	characterSpritePath = "marioSprites/marioRun";
+        }
+        else//miller
+        { 
+        	characterSpritePath = "millerSprites/Run";
+        }
         playerTextures = new Array<Texture>();
+        
         for (int i = 1; i <= 10; i++)
         {
-            Texture tmp = new Texture(Gdx.files.internal("millerSprites/Run" + i + ".png"));
+            Texture tmp = new Texture(Gdx.files.internal(characterSpritePath + i + ".png"));
             playerTextures.add(tmp);
         }
         
@@ -181,6 +201,7 @@ public class MyGame implements ApplicationListener {
         
         LoadNextLevel();
     }
+    
     
     public void LoadNextLevel()
     {         
@@ -266,6 +287,8 @@ public class MyGame implements ApplicationListener {
     public void render() {        
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
+        updateSprite();
         
         batch.begin();
         
@@ -358,6 +381,7 @@ public class MyGame implements ApplicationListener {
             batch.draw(playertexture, player.x, player.y);
             batch.end();
             if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            	int myscore=score;
             	SetToReadyState();
             	if(StartUp.isGuest == false)
             	{
@@ -367,6 +391,7 @@ public class MyGame implements ApplicationListener {
             	else//user is guest, show guest scores screen
             	{
             		GuestScoresScreen gss = new GuestScoresScreen();
+            		gss.setMyScore(myscore);
             	}
             	//dispose();
             } ;
@@ -403,6 +428,7 @@ public class MyGame implements ApplicationListener {
 
                 cd.BlockCollision(player, blocks);
                 if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+                	int myscore=score;
                 	SetToReadyState();
                 	if(StartUp.isGuest == false)
                 	{
@@ -412,6 +438,7 @@ public class MyGame implements ApplicationListener {
                 	else//user is guest, show guest scores screen
                 	{
                 		GuestScoresScreen gss = new GuestScoresScreen();
+                		gss.setMyScore(myscore);
                 	}
                 	//hide();
                 } 
@@ -492,6 +519,7 @@ public class MyGame implements ApplicationListener {
                 player.y += (mYSpeed*Gdx.graphics.getDeltaTime());
 
                 if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+                	int myscore=score;
                 	SetToReadyState();
                 	if(StartUp.isGuest == false)
                 	{
@@ -501,6 +529,7 @@ public class MyGame implements ApplicationListener {
                 	else//user is guest, show guest scores screen
                 	{
                 		GuestScoresScreen gss = new GuestScoresScreen();
+                		gss.setMyScore(myscore);
                 	}
                 	
                 	//dispose();
@@ -623,10 +652,37 @@ public class MyGame implements ApplicationListener {
         camera.update();
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
+        
         batch.end();
         LoadNextLevel();
        
     }
+      public void updateSprite()
+      {
+    	  playerTextures.clear();
+          if(StartUp.user.getCharSelectedID() == 2)//miller
+          { 
+          	characterSpritePath = "trojanSprites/trojanRun";
+          }
+          else if(StartUp.user.getCharSelectedID() == 3)//miller
+          { 
+          	characterSpritePath = "sonicSprites/sonicRun";
+          }
+          else if(StartUp.user.getCharSelectedID() == 4)//mario
+          { 
+          	characterSpritePath = "marioSprites/marioRun";
+          }
+          else//miller
+          { 
+          	characterSpritePath = "millerSprites/Run";
+          }
+          
+          for (int i = 1; i <= 10; i++)
+          {
+              Texture tmp = new Texture(Gdx.files.internal(characterSpritePath + i + ".png"));
+              playerTextures.add(tmp);
+          }
+      }
 
     @Override
     public void resize(int width, int height) {
