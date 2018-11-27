@@ -242,7 +242,7 @@ public class Store extends javax.swing.JFrame {
         // change state and text of button, if character is bought, update database
         if(button4State == 0){//select state, change to selected
             button4State = 1;//change it to selected
-            StartUp.user.setCharSelectedID(3);//change character to be trojan
+            StartUp.user.setCharSelectedID(4);//change character to be trojan
             //if any of the other button staes where on "selected" change them to unselect
             if(button1State == 1)
                 button1State = 0;
@@ -277,6 +277,7 @@ public class Store extends javax.swing.JFrame {
         if(charSelected == 1)//miller is selected
         {
             button1State = 1;
+            StartUp.user.setCharSelectedID(1);
             //set other button states now 2,3,4
             if(charactersBought.contains(2)){
                 button2State = 0;//text on button will be select
@@ -297,6 +298,8 @@ public class Store extends javax.swing.JFrame {
         else if(charSelected == 2)//trojan selected
         {
             button2State = 1;
+            StartUp.user.setCharSelectedID(2);
+            System.out.println("trojan sleected");
             //set other button states now 1,3,4
             if(charactersBought.contains(1)){
                 button1State = 0;//text on button will be select
@@ -315,6 +318,8 @@ public class Store extends javax.swing.JFrame {
         else if(charSelected == 3)//sonic selected
         {
             button3State = 1;
+            StartUp.user.setCharSelectedID(3);
+            System.out.println("SONIC SELECTED");
             //set other button states now 1,2,4
             if(charactersBought.contains(1)){
                 button1State = 0;//text on button will be select
@@ -333,6 +338,8 @@ public class Store extends javax.swing.JFrame {
         else//mario selected
         {
             button4State = 1;
+            StartUp.user.setCharSelectedID(4);
+            System.out.println("MARIO SELECTED");
             //set other button states now 1,2,3
             if(charactersBought.contains(1)){
                 button1State = 0;//text on button will be select

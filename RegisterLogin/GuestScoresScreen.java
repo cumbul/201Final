@@ -113,10 +113,7 @@ public class GuestScoresScreen extends javax.swing.JFrame {
         // go back to home frame
     	StartUp.isGuest = true;
     	System.out.println("Playing as guest: "+StartUp.isGuest);
-    	MyGame game = new MyGame();
-    	//DesktopLauncher launcher = new DesktopLauncher();
-    	//boolean x = launcher.run();
-    	//if(x) {close();}
+    	close();
     }                                       
     private void addScoresToTable()
     {
@@ -133,6 +130,10 @@ public class GuestScoresScreen extends javax.swing.JFrame {
                 System.out.println("MODEL IS NULL???");
             }
         }
+    }
+    public void setMyScore(int score)
+    {
+    	jLabel2.setText("Your Score: "+Integer.toString(score)+" pts");
     }
     /**
      * @param args the command line arguments

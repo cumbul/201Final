@@ -10,6 +10,7 @@ public class User {
     //SQL PASS
     protected static String SQLPass = "root";
     // Variables for User class
+    public boolean hasMadeGame = false;
     private String fname = "";
     private String lname = "";
     private String uname = "";
@@ -89,7 +90,7 @@ public class User {
     int getHighScore(){
         return highScore;
     }
-    int getCharSelectedID(){
+    public int getCharSelectedID(){
         return charSelectedID;
     }
     

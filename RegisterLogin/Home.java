@@ -154,9 +154,17 @@ public class Home extends javax.swing.JFrame {
 
     private void singlePlayerBtnActionPerformed(java.awt.event.ActionEvent evt) {
     	// go to single player game
-    	DesktopLauncher gameLauncher = new DesktopLauncher();//make new game launcher
-    	boolean x = gameLauncher.run();
-    	if(x) {close();}
+    	if(StartUp.user.hasMadeGame == false)
+    	{
+    		StartUp.user.hasMadeGame = true;
+    		DesktopLauncher gameLauncher = new DesktopLauncher();//make new game launcher
+        	boolean x = gameLauncher.run();
+        	close();
+    	}
+    	else
+    	{
+    		close();
+    	}
     }
 
     private void storeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storeBtnActionPerformed

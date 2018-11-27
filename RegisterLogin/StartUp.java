@@ -92,7 +92,7 @@ public class StartUp extends Thread{
 		user.setCoin(user.getCoin() + m.coinAmount);//add coins to their bank
 	}
 	public static boolean isGuest = false;//tells if user is playing as guest or not
-    static User user;
+    static public User user;
     static UserDriver userDriver = new UserDriver();
     static StartUp startUp;
     static ArrayList<Character> charactersList = userDriver.getAllCharactersInDatabase();//list of all existing charcaters in database, will be used later in code in store
