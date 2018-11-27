@@ -71,7 +71,7 @@ public class MyGame implements ApplicationListener {
     private Texture cointexture;
     private Array<Texture> playerTextures;
     private Array<Texture> coinTextures;
-    private Array<Texture> hazardTextures;
+    private Texture hazardTexture;
     private Texture powerUpTexture;
     //for the texts that are stored as images
     private Texture readyTextTexture;
@@ -89,7 +89,10 @@ public class MyGame implements ApplicationListener {
     private Array<Rectangle> blocks;    //keeps track of all our blocks
     private Array<Rectangle> coins;    //keeps track of all our coins
     private Array<Rectangle> hazards;
-    private Array<Rectangle> powerUps; //trying out powerup TEST
+    private Array<Rectangle> lasers;
+    private Texture laserTexture;
+    private boolean didClickShift = false;
+   
     
     //for collisions
     private CollisionDetector cd;
@@ -117,7 +120,12 @@ public class MyGame implements ApplicationListener {
         cd = new CollisionDetector(this);
         blocks = new Array<Rectangle>();
         coins = new Array<Rectangle>();
-        powerUps = new Array<Rectangle>();
+
+        hazards = new Array<Rectangle>();
+        lasers = new Array<Rectangle>();
+        laserTexture = new Texture(Gdx.files.internal("Laser.png"));
+        hazardTexture = new Texture(Gdx.files.internal("Sycamore.png"));
+
         //wavSound = Gdx.audio.newSound(Gdx.files.internal("data/wav.wav"));
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1024, 768);
@@ -146,8 +154,6 @@ public class MyGame implements ApplicationListener {
         //set our block texture
         blocktexture = new Texture(Gdx.files.internal("BlockA.png"));
         
-        //TEST powerup
-        powerUpTexture = new Texture(Gdx.files.internal("powerup1.png"));
         
         //set our text textures
         readyTextTexture = new Texture(Gdx.files.internal("Text/ready.png"));
@@ -204,14 +210,14 @@ public class MyGame implements ApplicationListener {
                         tmp.height = 32;
                         coins.add(tmp);
                     }
-                    else if("U".equals(type))
+                    else if("H".equals(type))
                     {
                         Rectangle tmp = new Rectangle();
                         tmp.x = 64*j + curr_width;
                         tmp.y = y_pos;
-                        tmp.width = 32;
-                        tmp.height = 32;
-                        powerUps.add(tmp);
+                        tmp.width = 64;
+                        tmp.height = 64;
+                        hazards.add(tmp);
                     }
 
                     else if (!".".equals(type))
@@ -289,12 +295,6 @@ public class MyGame implements ApplicationListener {
             batch.draw(cointexture, currCoin.x, currCoin.y);
         }
 
-        //TEST
-        for (Iterator<Rectangle> iter = powerUps.iterator(); iter.hasNext();)
-        {
-            Rectangle currPowerUp = iter.next();
-            batch.draw(powerUpTexture, currPowerUp.x, currPowerUp.y);
-        }
         
         batch.end();
 
@@ -367,6 +367,17 @@ public class MyGame implements ApplicationListener {
                 batch.draw(loseTexture, lose.x, lose.y);
                 font.draw(batch, "SCORE: " + score, camera.position.x + 250, camera.position.y + 300);
                 font.draw(batch, "COINS: " + coins_collected, camera.position.x + 250, camera.position.y + 275);
+
+                batch.draw(playertexture, player.x, player.y);
+
+                for(Rectangle l: lasers)
+                {
+                    batch.draw(laserTexture, l.x, l.y);
+                }
+                for(Rectangle h: hazards)
+                {
+                    batch.draw(hazardTexture, h.x, h.y);
+                }
 
                 batch.end();
 
@@ -445,6 +456,16 @@ public class MyGame implements ApplicationListener {
 
                 font.draw(batch, "SCORE: " + score, camera.position.x + 250, camera.position.y + 300);
                 font.draw(batch, "COINS: " + coins_collected, camera.position.x + 250, camera.position.y + 275);
+                
+                for(Rectangle l: lasers)
+                {
+                    batch.draw(laserTexture, l.x, l.y);
+                }
+                for(Rectangle h: hazards)
+                {
+                    batch.draw(hazardTexture, h.x, h.y);
+                }
+
                 batch.end();
 
                 mYSpeed -= 2000*Gdx.graphics.getDeltaTime();
@@ -465,10 +486,17 @@ public class MyGame implements ApplicationListener {
                 	//dispose();
                 } 
 
-                if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
+               if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !didClickShift)
                 {
-                    
+                    Rectangle tmpLaser = new Rectangle();
+                    tmpLaser.x = player.x + 10;
+                    tmpLaser.y = player.y + 3;
+                    tmpLaser.width = 32;
+                    tmpLaser.height = 32;
+                    lasers.add(tmpLaser);  
                 }
+                didClickShift = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
+
                 if(Gdx.input.isKeyPressed(Input.Keys.SPACE))mYSpeed = 600.0f;
                 if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.x -= 300 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.x += 100 * Gdx.graphics.getDeltaTime();
@@ -488,15 +516,41 @@ public class MyGame implements ApplicationListener {
                     }
                 }
 
-                //TEST
-                for (Rectangle c: powerUps)
+                for(Rectangle h: hazards)
                 {
-                    if (cd.Intersect(c, player))
+                    if(cd.Intersect(player, h))
                     {
-                        powerUps.removeValue(c, true);
-                        System.out.println("GOT POWER UP");
-                        //make invulnerable for a few seconds?
+                        gameRunning = false;
                     }
+                    if(h.x - player.x < 1024)
+                    {
+                        h.x -= 50*Gdx.graphics.getDeltaTime();
+                    }
+                    if(h.x - player.x < - 1024)
+                    {
+                        hazards.removeValue(h, true);
+                    }
+                }
+                for(Rectangle l: lasers)
+                {
+                    l.x += 1500*Gdx.graphics.getDeltaTime();
+                    if(l.x > player.x + 1000)
+                    {
+                        lasers.removeValue(l, true);
+                        System.out.println("laser went out of screen range");
+                    }
+                    else
+                    {
+                        for(Rectangle h: hazards)
+                        {
+                            if(cd.Intersect(l, h))
+                            {
+                                hazards.removeValue(h, true);
+                                lasers.removeValue(l, true);
+                                System.out.println("destroyed hazard");
+                            }
+                        } 
+                    }    
                 }
 
                 //send lose message if player falls behind camera pace
@@ -505,6 +559,11 @@ public class MyGame implements ApplicationListener {
                     System.out.println("PLAYER IS BEHIND CAMERA");
                     gameRunning = false;
                     //System.exit(0);
+                }
+                if(player.y < 0)
+                {
+                    System.out.println("Player is below screen");
+                    gameRunning = false;
                 }  
             }
         } 
@@ -534,6 +593,10 @@ public class MyGame implements ApplicationListener {
         
         playerAnimTimer = 0.0f;
         coinAnimTimer = 0.0f;
+
+        didClickShift = false;
+        lasers.clear();
+        hazards.clear();
         
         first_iteration = true;
         gameRunning = true;
