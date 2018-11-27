@@ -203,6 +203,8 @@ public class MyGame implements ApplicationListener {
                     playerExists = true;
                     player.x = 64*j + curr_width;
                     player.y = y_pos;
+                    playerStartx = player.x;
+                    playerStarty = player.y;
                 }
                 else
                 {
@@ -234,7 +236,7 @@ public class MyGame implements ApplicationListener {
                         pitfalls.add(tmp);
                     }
 
-                    else if (!".".equals(type))
+                    else if (!".".equals(type) && !"P".equals(type))
                     {
                         Rectangle tmp = new Rectangle();
                         tmp.x = 64*j+curr_width;
