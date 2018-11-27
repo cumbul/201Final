@@ -92,6 +92,8 @@ public class MyGame implements ApplicationListener {
     private Array<Rectangle> lasers;
     private Texture laserTexture;
     private boolean didClickShift = false;
+    private Array<Rectangle> pitfalls;
+    private Texture pitfallTexture;
    
     
     //for collisions
@@ -120,6 +122,9 @@ public class MyGame implements ApplicationListener {
         cd = new CollisionDetector(this);
         blocks = new Array<Rectangle>();
         coins = new Array<Rectangle>();
+
+        pitfalls = new Array<Rectangle>();
+        pitfallTexture = new Texture(Gdx.files.internal("lava.jpg"));
 
         hazards = new Array<Rectangle>();
         lasers = new Array<Rectangle>();
@@ -152,7 +157,7 @@ public class MyGame implements ApplicationListener {
         bg3_texture = new Texture(Gdx.files.internal("backGroundSprites/Mid_2.png"));
         
         //set our block texture
-        blocktexture = new Texture(Gdx.files.internal("BlockA.png"));
+        blocktexture = new Texture(Gdx.files.internal("block.png"));
         
         
         //set our text textures
@@ -219,6 +224,15 @@ public class MyGame implements ApplicationListener {
                         tmp.height = 64;
                         hazards.add(tmp);
                     }
+                    else if("O".equals(type))
+                    {
+                        Rectangle tmp = new Rectangle();
+                        tmp.x = 64*j + curr_width;
+                        tmp.y = y_pos;
+                        tmp.width = 64;
+                        tmp.height = 32;
+                        pitfalls.add(tmp);
+                    }
 
                     else if (!".".equals(type))
                     {
@@ -248,7 +262,7 @@ public class MyGame implements ApplicationListener {
     //PROCESSINPUT()AND UPDATEGAME()
     @Override
     public void render() {        
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         batch.begin();
@@ -276,6 +290,10 @@ public class MyGame implements ApplicationListener {
         batch.draw(bg1_texture, bg1.x, bg1.y);
         batch.draw(bg2_texture, bg2.x, bg2.y);
         batch.draw(bg3_texture, bg3.x, bg3.y);
+
+        for (Rectangle currBlock : pitfalls) {
+            batch.draw(pitfallTexture, currBlock.x, currBlock.y);
+        }
 
         batch.setProjectionMatrix(camera.combined);
         for (Rectangle currBlock : blocks) {
@@ -521,10 +539,6 @@ public class MyGame implements ApplicationListener {
                     if(cd.Intersect(player, h))
                     {
                         gameRunning = false;
-                    }
-                    if(h.x - player.x < 1024)
-                    {
-                        h.x -= 50*Gdx.graphics.getDeltaTime();
                     }
                     if(h.x - player.x < - 1024)
                     {
