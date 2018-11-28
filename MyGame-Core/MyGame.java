@@ -20,11 +20,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
-import registerlogin.GuestScoresScreen;
 //ADDITION
 import registerlogin.ScoresScreen;
-import registerlogin.StartUp;
 
 /**
  *
@@ -34,12 +31,9 @@ public class MyGame implements ApplicationListener {
     //for directions and start to be shown in the beginning
     private boolean isWaiting = true;
     private float time_passed = 0.0f;
-    private boolean gamePaused = true;
     
     //so that we don't instantiate more than one player
     private boolean playerExists = false;
-    private float playerStartx;
-    private float playerStarty;
     
     //so that player can't keep jumping forever, and we only jump when we didn't jump previously
     private boolean spacePressed = false;
@@ -71,7 +65,7 @@ public class MyGame implements ApplicationListener {
     private Texture cointexture;
     private Array<Texture> playerTextures;
     private Array<Texture> coinTextures;
-    private Texture hazardTexture;
+    private Array<Texture> hazardTextures;
     private Texture powerUpTexture;
     //for the texts that are stored as images
     private Texture readyTextTexture;
@@ -89,12 +83,7 @@ public class MyGame implements ApplicationListener {
     private Array<Rectangle> blocks;    //keeps track of all our blocks
     private Array<Rectangle> coins;    //keeps track of all our coins
     private Array<Rectangle> hazards;
-    private Array<Rectangle> lasers;
-    private Texture laserTexture;
-    private boolean didClickShift = false;
-    private Array<Rectangle> pitfalls;
-    private Texture pitfallTexture;
-   
+    private Array<Rectangle> powerUps; //trying out powerup TEST
     
     //for collisions
     private CollisionDetector cd;
@@ -115,8 +104,6 @@ public class MyGame implements ApplicationListener {
     private boolean first_iteration = true;
     boolean gameRunning = true;
     
-    String characterSpritePath = "";
-    
    
     //create essentially generates the output
     @Override
@@ -124,42 +111,16 @@ public class MyGame implements ApplicationListener {
         cd = new CollisionDetector(this);
         blocks = new Array<Rectangle>();
         coins = new Array<Rectangle>();
-
-        pitfalls = new Array<Rectangle>();
-        pitfallTexture = new Texture(Gdx.files.internal("lava.jpg"));
-
-        hazards = new Array<Rectangle>();
-        lasers = new Array<Rectangle>();
-        laserTexture = new Texture(Gdx.files.internal("Laser.png"));
-        hazardTexture = new Texture(Gdx.files.internal("Sycamore.png"));
-
+        powerUps = new Array<Rectangle>();
         //wavSound = Gdx.audio.newSound(Gdx.files.internal("data/wav.wav"));
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1024, 768);
         
         //set each of the player textures for our player run animation
-       
-        if(StartUp.user.getCharSelectedID() == 2)//miller
-        { 
-        	characterSpritePath = "trojanSprites/trojanRun";
-        }
-        else if(StartUp.user.getCharSelectedID() == 3)//miller
-        { 
-        	characterSpritePath = "sonicSprites/sonicRun";
-        }
-        else if(StartUp.user.getCharSelectedID() == 4)//miller
-        { 
-        	characterSpritePath = "marioSprites/marioRun";
-        }
-        else//miller
-        { 
-        	characterSpritePath = "millerSprites/Run";
-        }
         playerTextures = new Array<Texture>();
-        
         for (int i = 1; i <= 10; i++)
         {
-            Texture tmp = new Texture(Gdx.files.internal(characterSpritePath + i + ".png"));
+            Texture tmp = new Texture(Gdx.files.internal("millerSprites/Run" + i + ".png"));
             playerTextures.add(tmp);
         }
         
@@ -177,8 +138,10 @@ public class MyGame implements ApplicationListener {
         bg3_texture = new Texture(Gdx.files.internal("backGroundSprites/Mid_2.png"));
         
         //set our block texture
-        blocktexture = new Texture(Gdx.files.internal("block.png"));
+        blocktexture = new Texture(Gdx.files.internal("BlockA.png"));
         
+        //TEST powerup
+        powerUpTexture = new Texture(Gdx.files.internal("powerup1.png"));
         
         //set our text textures
         readyTextTexture = new Texture(Gdx.files.internal("Text/ready.png"));
@@ -202,7 +165,6 @@ public class MyGame implements ApplicationListener {
         LoadNextLevel();
     }
     
-    
     public void LoadNextLevel()
     {         
         if(which_level > 3)
@@ -224,8 +186,6 @@ public class MyGame implements ApplicationListener {
                     playerExists = true;
                     player.x = 64*j + curr_width;
                     player.y = y_pos;
-                    playerStartx = player.x;
-                    playerStarty = player.y;
                 }
                 else
                 {
@@ -238,26 +198,17 @@ public class MyGame implements ApplicationListener {
                         tmp.height = 32;
                         coins.add(tmp);
                     }
-                    else if("H".equals(type))
+                    else if("U".equals(type))
                     {
                         Rectangle tmp = new Rectangle();
                         tmp.x = 64*j + curr_width;
                         tmp.y = y_pos;
-                        tmp.width = 64;
-                        tmp.height = 64;
-                        hazards.add(tmp);
-                    }
-                    else if("O".equals(type))
-                    {
-                        Rectangle tmp = new Rectangle();
-                        tmp.x = 64*j + curr_width;
-                        tmp.y = y_pos;
-                        tmp.width = 64;
+                        tmp.width = 32;
                         tmp.height = 32;
-                        pitfalls.add(tmp);
+                        powerUps.add(tmp);
                     }
 
-                    else if (!".".equals(type) && !"P".equals(type))
+                    else if (!".".equals(type))
                     {
                         Rectangle tmp = new Rectangle();
                         tmp.x = 64*j+curr_width;
@@ -285,10 +236,8 @@ public class MyGame implements ApplicationListener {
     //PROCESSINPUT()AND UPDATEGAME()
     @Override
     public void render() {        
-        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        updateSprite();
         
         batch.begin();
         
@@ -316,10 +265,6 @@ public class MyGame implements ApplicationListener {
         batch.draw(bg2_texture, bg2.x, bg2.y);
         batch.draw(bg3_texture, bg3.x, bg3.y);
 
-        for (Rectangle currBlock : pitfalls) {
-            batch.draw(pitfallTexture, currBlock.x, currBlock.y);
-        }
-
         batch.setProjectionMatrix(camera.combined);
         for (Rectangle currBlock : blocks) {
             batch.draw(blocktexture, currBlock.x, currBlock.y);
@@ -338,6 +283,12 @@ public class MyGame implements ApplicationListener {
             batch.draw(cointexture, currCoin.x, currCoin.y);
         }
 
+        //TEST
+        for (Iterator<Rectangle> iter = powerUps.iterator(); iter.hasNext();)
+        {
+            Rectangle currPowerUp = iter.next();
+            batch.draw(powerUpTexture, currPowerUp.x, currPowerUp.y);
+        }
         
         batch.end();
 
@@ -345,12 +296,7 @@ public class MyGame implements ApplicationListener {
         if(isWaiting)
         {
             batch.begin();
-            if(Gdx.input.isKeyPressed(Input.Keys.S))
-            {
-                gamePaused = false;
-            }
-            if(!gamePaused)
-                time_passed += Gdx.graphics.getDeltaTime();
+            time_passed += Gdx.graphics.getDeltaTime();
    
             if(time_passed > 3)
             {
@@ -381,18 +327,7 @@ public class MyGame implements ApplicationListener {
             batch.draw(playertexture, player.x, player.y);
             batch.end();
             if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            	int myscore=score;
-            	SetToReadyState();
-            	if(StartUp.isGuest == false)
-            	{
-            		System.out.println("displaying logged in user scores");
-            		ScoresScreen ss = new ScoresScreen();
-            	}
-            	else//user is guest, show guest scores screen
-            	{
-            		GuestScoresScreen gss = new GuestScoresScreen();
-            		gss.setMyScore(myscore);
-            	}
+            	ScoresScreen ss = new ScoresScreen();
             	//dispose();
             } ;
         }
@@ -413,33 +348,11 @@ public class MyGame implements ApplicationListener {
                 font.draw(batch, "SCORE: " + score, camera.position.x + 250, camera.position.y + 300);
                 font.draw(batch, "COINS: " + coins_collected, camera.position.x + 250, camera.position.y + 275);
 
-                batch.draw(playertexture, player.x, player.y);
-
-                for(Rectangle l: lasers)
-                {
-                    batch.draw(laserTexture, l.x, l.y);
-                }
-                for(Rectangle h: hazards)
-                {
-                    batch.draw(hazardTexture, h.x, h.y);
-                }
-
                 batch.end();
 
                 cd.BlockCollision(player, blocks);
                 if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-                	int myscore=score;
-                	SetToReadyState();
-                	if(StartUp.isGuest == false)
-                	{
-                		System.out.println("displaying logged in user scores");
-                		ScoresScreen ss = new ScoresScreen();
-                	}
-                	else//user is guest, show guest scores screen
-                	{
-                		GuestScoresScreen gss = new GuestScoresScreen();
-                		gss.setMyScore(myscore);
-                	}
+                	ScoresScreen ss = new ScoresScreen();
                 	//hide();
                 } 
             }
@@ -503,49 +416,20 @@ public class MyGame implements ApplicationListener {
 
                 font.draw(batch, "SCORE: " + score, camera.position.x + 250, camera.position.y + 300);
                 font.draw(batch, "COINS: " + coins_collected, camera.position.x + 250, camera.position.y + 275);
-                
-                for(Rectangle l: lasers)
-                {
-                    batch.draw(laserTexture, l.x, l.y);
-                }
-                for(Rectangle h: hazards)
-                {
-                    batch.draw(hazardTexture, h.x, h.y);
-                }
-
                 batch.end();
 
                 mYSpeed -= 2000*Gdx.graphics.getDeltaTime();
                 player.y += (mYSpeed*Gdx.graphics.getDeltaTime());
 
                 if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-                	int myscore=score;
-                	SetToReadyState();
-                	if(StartUp.isGuest == false)
-                	{
-                		System.out.println("displaying logged in user scores");
-                		ScoresScreen ss = new ScoresScreen();
-                	}
-                	else//user is guest, show guest scores screen
-                	{
-                		GuestScoresScreen gss = new GuestScoresScreen();
-                		gss.setMyScore(myscore);
-                	}
-                	
+                	ScoresScreen ss = new ScoresScreen();
                 	//dispose();
                 } 
 
-               if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) && !didClickShift)
+                if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))
                 {
-                    Rectangle tmpLaser = new Rectangle();
-                    tmpLaser.x = player.x + 10;
-                    tmpLaser.y = player.y + 3;
-                    tmpLaser.width = 32;
-                    tmpLaser.height = 32;
-                    lasers.add(tmpLaser);  
+                    
                 }
-                didClickShift = Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
-
                 if(Gdx.input.isKeyPressed(Input.Keys.SPACE))mYSpeed = 600.0f;
                 if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) player.x -= 300 * Gdx.graphics.getDeltaTime();
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) player.x += 100 * Gdx.graphics.getDeltaTime();
@@ -565,37 +449,15 @@ public class MyGame implements ApplicationListener {
                     }
                 }
 
-                for(Rectangle h: hazards)
+                //TEST
+                for (Rectangle c: powerUps)
                 {
-                    if(cd.Intersect(player, h))
+                    if (cd.Intersect(c, player))
                     {
-                        gameRunning = false;
+                        powerUps.removeValue(c, true);
+                        System.out.println("GOT POWER UP");
+                        //make invulnerable for a few seconds?
                     }
-                    if(h.x - player.x < - 1024)
-                    {
-                        hazards.removeValue(h, true);
-                    }
-                }
-                for(Rectangle l: lasers)
-                {
-                    l.x += 1500*Gdx.graphics.getDeltaTime();
-                    if(l.x > player.x + 1000)
-                    {
-                        lasers.removeValue(l, true);
-                        System.out.println("laser went out of screen range");
-                    }
-                    else
-                    {
-                        for(Rectangle h: hazards)
-                        {
-                            if(cd.Intersect(l, h))
-                            {
-                                hazards.removeValue(h, true);
-                                lasers.removeValue(l, true);
-                                System.out.println("destroyed hazard");
-                            }
-                        } 
-                    }    
                 }
 
                 //send lose message if player falls behind camera pace
@@ -604,85 +466,10 @@ public class MyGame implements ApplicationListener {
                     System.out.println("PLAYER IS BEHIND CAMERA");
                     gameRunning = false;
                     //System.exit(0);
-                }
-                if(player.y < 0)
-                {
-                    System.out.println("Player is below screen");
-                    gameRunning = false;
                 }  
             }
         } 
     }
-
-      public void SetToReadyState()
-    {
-    	gamePaused = true;
-        coins_collected = 0;
-        score = 0;
-        which_level = 0;
-        isWaiting = true;
-        time_passed = 0.0f;
-        
-        x_start_level = 0.0f;
-        curr_width = 0;
-        which_level = 0;
-        
-        bg_start = 0.0f;
-        shift_1 = 0.0f;
-        shift_2 = 0.0f;
-        shift_3 = 0.0f;
-        one_that_stays = 3;
-        shift_time = 0.0f;
-        
-        mYSpeed = 0.0f;
-        
-        playerAnimTimer = 0.0f;
-        coinAnimTimer = 0.0f;
-
-        didClickShift = false;
-        lasers.clear();
-        hazards.clear();
-        
-        first_iteration = true;
-        gameRunning = true;
-        
-        player.x = playerStartx;
-        player.y = playerStarty;
-        camera.position.x = playerStartx + (1024/2) - 190;
-        camera.update();
-        batch.begin();
-        batch.setProjectionMatrix(camera.combined);
-        
-        batch.end();
-        LoadNextLevel();
-       
-    }
-      public void updateSprite()
-      {
-    	  playerTextures.clear();
-          if(StartUp.user.getCharSelectedID() == 2)//miller
-          { 
-          	characterSpritePath = "trojanSprites/trojanRun";
-          }
-          else if(StartUp.user.getCharSelectedID() == 3)//miller
-          { 
-          	characterSpritePath = "sonicSprites/sonicRun";
-          }
-          else if(StartUp.user.getCharSelectedID() == 4)//mario
-          { 
-          	characterSpritePath = "marioSprites/marioRun";
-          }
-          else//miller
-          { 
-          	characterSpritePath = "millerSprites/Run";
-          }
-          
-          for (int i = 1; i <= 10; i++)
-          {
-              Texture tmp = new Texture(Gdx.files.internal(characterSpritePath + i + ".png"));
-              playerTextures.add(tmp);
-          }
-      }
 
     @Override
     public void resize(int width, int height) {
