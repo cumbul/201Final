@@ -65,7 +65,14 @@ public class GuestScoresScreen extends javax.swing.JFrame {
         backBtn.setBackground(new java.awt.Color(179, 11, 11));
         backBtn.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         backBtn.setForeground(new java.awt.Color(250, 250, 250));
-        backBtn.setText("Play Again");
+        if(StartUp.user == null)//playing as guest
+        {
+        	backBtn.setText("Play Again");
+        }
+        else
+        {
+        	backBtn.setText("Back");
+        }
         backBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backBtnActionPerformed(evt);
@@ -111,9 +118,20 @@ public class GuestScoresScreen extends javax.swing.JFrame {
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
         // go back to home frame
-    	StartUp.isGuest = true;
-    	System.out.println("Playing as guest: "+StartUp.isGuest);
-    	close();
+    	if(StartUp.user == null)
+    	{
+    		StartUp.isGuest = true;
+        	System.out.println("Playing as guest: "+StartUp.isGuest);
+        	close();
+    	}
+    	else//not [laying as guest
+    	{
+    		StartUp.isGuest = false;
+        	System.out.println("not Playing as guest: "+StartUp.isGuest);
+        	Home homescreen  = new Home();
+        	close();
+    	}
+    	
     }                                       
     private void addScoresToTable()
     {
@@ -134,6 +152,15 @@ public class GuestScoresScreen extends javax.swing.JFrame {
     public void setMyScore(int score)
     {
     	jLabel2.setText("Your Score: "+Integer.toString(score)+" pts");
+    	//update data base score if logged in
+    	if(StartUp.user != null)
+    	{
+    		if(StartUp.user.getHighScore() < score)
+    		{
+    			StartUp.user.setHighScore(score);
+    		}
+    		addScoresToTable();//update scores table
+    	}
     }
     /**
      * @param args the command line arguments
